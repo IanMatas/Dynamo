@@ -168,6 +168,75 @@ def build_model(length=130.0, width=75.0, height=40.0,
             for a,b in zip(path,path[1:]):
                 beam(grid,a,b,0.12)
 
+    # Sweeping elevated roof ribbon that crosses the oval hall, matching the
+    # defining bridge-like wave in the supplied reference images. Coordinates
+    # are normalized to the overall envelope before the final bounds pass.
+    controls = [
+        (-0.49, -0.08, 0.28, 0.10),
+        (-0.40, -0.28, 0.16, 0.12),
+        (-0.29, -0.39, 0.10, 0.13),
+        (-0.18, -0.31, 0.20, 0.14),
+        (-0.10, -0.06, 0.54, 0.15),
+        (-0.045, 0.22, 0.91, 0.15),
+        (0.04, 0.39, 0.94, 0.15),
+        (0.19, 0.34, 0.78, 0.14),
+        (0.34, 0.19, 0.63, 0.13),
+        (0.48, 0.09, 0.70, 0.10),
+    ]
+    controls = [(x*length, y*width, z*height, w*width) for x,y,z,w in controls]
+    def catmull(a,b,c,d,t):
+        return tuple(0.5*((2*b[k])+(-a[k]+c[k])*t+
+                          (2*a[k]-5*b[k]+4*c[k]-d[k])*t*t+
+                          (-a[k]+3*b[k]-3*c[k]+d[k])*t*t*t)
+                     for k in range(4))
+    path=[]
+    samples_per_span=10
+    for span in range(len(controls)-1):
+        a=controls[max(0,span-1)]
+        b=controls[span]
+        c=controls[span+1]
+        d=controls[min(len(controls)-1,span+2)]
+        for j in range(samples_per_span):
+            path.append(catmull(a,b,c,d,j/float(samples_per_span)))
+    path.append(controls[-1])
+    ribbon=mesh('Crossing wave roof', 'Porcelain')
+    # Sweep a thick, broad roof band along a 3D centreline.
+    sections=[]
+    for i,(x,y,z,half_width) in enumerate(path):
+        prev=path[max(0,i-1)]
+        nxt=path[min(len(path)-1,i+1)]
+        dx,dy=nxt[0]-prev[0],nxt[1]-prev[1]
+        mag=math.hypot(dx,dy)
+        if mag < 1e-8:
+            dx,dy,mag=1.,0.,1.
+        sx,sy=-dy/mag,dx/mag
+        upper=[]; lower=[]
+        for side in (-1,1):
+            px=x+sx*half_width*side
+            py=y+sy*half_width*side
+            upper.append(point(ribbon,(px,py,z)))
+            lower.append(point(ribbon,(px,py,z-thickness)))
+        sections.append((upper,lower))
+    for i in range(len(sections)-1):
+        u0,l0=sections[i]
+        u1,l1=sections[i+1]
+        quad(ribbon,u0[0],u1[0],u1[1],u0[1])
+        quad(ribbon,l0[1],l1[1],l1[0],l0[0])
+        quad(ribbon,u0[0],l0[0],l1[0],u1[0])
+        quad(ribbon,u1[1],l1[1],l0[1],u0[1])
+    u0,l0=sections[0]; u1,l1=sections[-1]
+    quad(ribbon,u0[1],u0[0],l0[0],l0[1])
+    quad(ribbon,u1[0],u1[1],l1[1],l1[0])
+
+    # Slender support fins below the low front approach, like the reference.
+    piers=mesh('Wave roof piers', 'Porcelain')
+    for x,y,z,w in path[8:31:5]:
+        top_z=max(1.5,z-thickness*1.5)
+        size=min(1.4,w*0.10)
+        base=(x,y,0.15)
+        top=(x,y,top_z)
+        beam(piers,base,top,size)
+
     # Fine strips follow the shell exactly, forming panel joints.
     seams=mesh('Roof panel joints', 'Joint')
     for i in range(0,n,2):

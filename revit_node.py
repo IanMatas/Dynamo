@@ -77,12 +77,12 @@ def create_revit_model(inputs):
             built = builder.GetBuildResult()
             # Revit's TessellatedShapeBuilderResult API does not expose
             # AreThereInvalidData; Build() throws on fatal tessellation errors.
-            geometry_objects = built.GetGeometricalObjects()
+            geometry_objects = list(built.GetGeometricalObjects())
+            if len(geometry_objects) == 0:
+                raise ValueError('Revit produced no geometry for ' + mesh['name'])
             objects = List[GeometryObject]()
             for geometry_object in geometry_objects:
                 objects.Add(geometry_object)
-            if objects.Count == 0:
-                raise ValueError('Revit produced no geometry for ' + mesh['name'])
             element = existing.pop(mesh['name'], None)
             if element is None:
                 element = DirectShape.CreateElement(doc, ElementId(BuiltInCategory.OST_GenericModel))

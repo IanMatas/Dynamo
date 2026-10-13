@@ -1,6 +1,6 @@
 # Wave Hall — Dynamo for Revit 2026
 
-A reference-inspired architectural concept model with a flowing white roof, central oval skylight and grid, panelled facades, glazed entrance with fins, and ground slab.
+A reference-inspired architectural concept model with a broad, elevated crossing roof ribbon sweeping over a flowing oval hall, central skylight and grid, panelled facades, glazed entrance with fins, support piers, and ground slab.
 
 **Overall dimensions: 130 m long × 75 m wide × 40 m maximum height.** These are the overall geometry bounds, measured from ground at Z = 0. X is length; Y is width. The model is centred on the Revit internal origin. The photos are interpreted conceptually; their exact geometry cannot be recovered from perspective images alone.
 
@@ -13,7 +13,7 @@ A reference-inspired architectural concept model with a flowing white roof, cent
 5. Click **Run**. Allow the tessellated components to build. The node output reports the model key, dimensions, element list, and triangle count.
 6. Return to Revit, use **Zoom to Fit**, and select **Shaded** or **Consistent Colors**. Ensure **Generic Models** are visible and any section box includes the internal origin and Z = 0–40 m. Save your project as an `.rvt` file.
 
-If Dynamo reports a Python engine error, confirm CPython3 is available in the Dynamo installation shipped with Revit 2026. If it reports an API error, the Python node warning contains the exact exception needed to diagnose it. Actual Revit execution has not been verified on this Linux workspace.
+If Dynamo reports a Python engine error, confirm CPython3 is available in the Dynamo installation shipped with Revit 2026. If it reports an API error, the Python node warning contains the exact exception needed to diagnose it. Actual Revit execution has not been verified on this Linux workspace. If you already have an older version open in Dynamo, close that graph and open this updated file again; Dynamo continues to run the graph currently loaded in its workspace.
 
 ## Controls
 
@@ -31,11 +31,11 @@ Edit the seven code blocks, in order from top to bottom, retaining their semicol
 
 Metres are converted to Revit internal feet, independently of project display units. The final geometry is normalized to the requested overall bounds, including fins and roof joints; nominal opening dimensions can change very slightly in that normalization.
 
-Use the same model key to update the same eight generated components. Use another key to create another model at the same origin. A rerun resets manually moved geometry for that key to the graph's coordinates. Only DirectShapes tagged by this graph and this model key are updated or removed. Existing project elements outside that set are not targeted. Materials named `WaveHall - ...` are reused if present.
+Use the same model key to update the same ten generated components. Use another key to create another model at the same origin. A rerun resets manually moved geometry for that key to the graph's coordinates. Only DirectShapes tagged by this graph and this model key are updated or removed. Existing project elements outside that set are not targeted. Materials named `WaveHall - ...` are reused if present.
 
 ## What is created
 
-Eight **Generic Model DirectShape mesh** elements: roof shell, facade panels, entrance glazing, entrance fins, central skylight, skylight grid, roof panel joints, and ground floor. The default model contains 21,384 triangles. Materials include white cladding, transparent glass, aluminium, joints, and concrete.
+Ten **Generic Model DirectShape mesh** elements: oval roof shell, crossing wave roof, facade panels, entrance glazing, entrance fins, wave roof piers, central skylight, skylight grid, roof panel joints, and ground floor. The default model contains 22,168 triangles. Materials include white cladding, transparent glass, aluminium, joints, and concrete.
 
 The mesh surfaces approximate curves with facets; increase Segments for a smoother outline at greater processing cost. This is a concept envelope, not a structural design or a fully detailed building. Components are not native Revit roofs, walls, floors, structural framing, or curtain systems. The single-surface skylight has no glazing thickness. It does not include rooms, doors, foundations, reinforcement, connections, or fabrication details. Revit mesh cut/section and quantity behaviour differs from native solid building elements. Edit the form through Dynamo; use it as a reference when developing native BIM elements.
 
