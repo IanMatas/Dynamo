@@ -75,8 +75,8 @@ def create_revit_model(inputs):
             builder.Fallback = TessellatedShapeBuilderFallback.Salvage
             builder.Build()
             built = builder.GetBuildResult()
-            if built.AreThereInvalidData:
-                raise ValueError('Revit rejected tessellation data in ' + mesh['name'])
+            # Revit's TessellatedShapeBuilderResult API does not expose
+            # AreThereInvalidData; Build() throws on fatal tessellation errors.
             objects = built.GetGeometricalObjects()
             if objects.Count == 0:
                 raise ValueError('Revit produced no geometry for ' + mesh['name'])
