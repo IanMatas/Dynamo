@@ -1,0 +1,382 @@
+{
+  "Uuid": "07cfe0fb451b535d8bb7c1ff870d2c68",
+  "IsCustomNode": false,
+  "Description": "Reference-inspired wave hall, 130 x 75 x 40 metres. Open a Revit 2026 project; run manually. Creates Generic Model DirectShapes. No external packages.",
+  "Name": "Wave Hall - Revit 2026",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "130.0;",
+      "Id": "ee25c5822e4e5e299d44e01d29bcf75e",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "694f8690bb9f55208aae1bd94b6402e5",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Length (m)"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "75.0;",
+      "Id": "33655fa3047550feabecc965aca28567",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d7fb9ac08d035d32925ef29cc6913820",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Width (m)"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "40.0;",
+      "Id": "a3a0be51057a5a0096f3a867d0013c5f",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "93e87719f4d9573db1c01d1d0e0c0f0d",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Height (m)"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "48.0;",
+      "Id": "034428bb09f05fea8bd5bab2e02e6fd4",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b24ae14bcfd45b70807d935c4c817459",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Opening length (m)"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "40.0;",
+      "Id": "fdc88f9b9d745491a81048d2a866a35b",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d5f6e44e19555de2945bac6c2de5033a",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Opening width (m)"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "128;",
+      "Id": "1d0c41d5a4d852a9852dfe118acd4717",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f788371d20ee5213b4370fa7badbaf2b",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Segments (64 to 256, multiple of 4)"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"WaveHall_01\";",
+      "Id": "c250b839b49b5274b4a09f462c04860d",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "fae7278c63cf5c07bd7b7db22ba085b3",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Model key (reuse to update)"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "\"\"\"Dependency-free conceptual wave hall geometry. Coordinates are metres.\"\"\"\nimport math\n\n\ndef build_model(length=130.0, width=75.0, height=40.0,\n                opening_length=48.0, opening_width=40.0, segments=128):\n    vals = (length, width, height, opening_length, opening_width)\n    if not all(math.isfinite(v) and v > 0 for v in vals):\n        raise ValueError('Dimensions must be finite positive metres.')\n    if length < 20 or width < 15 or height < 5:\n        raise ValueError('Use length >= 20 m, width >= 15 m, height >= 5 m.')\n    if not (0.15 * length <= opening_length <= 0.55 * length):\n        raise ValueError('Opening length must be 15 to 55 percent of total length.')\n    if not (0.15 * width <= opening_width <= 0.65 * width):\n        raise ValueError('Opening width must be 15 to 65 percent of total width.')\n    if int(segments) != segments or not 64 <= segments <= 256 or segments % 4:\n        raise ValueError('Segments must be a multiple of 4 from 64 to 256.')\n    n = int(segments)\n    meshes = []\n\n    def mesh(name, material):\n        m = {'name': name, 'material': material, 'vertices': [], 'faces': []}\n        meshes.append(m)\n        return m\n\n    def tri(m, a, b, c):\n        m['faces'].append((a, b, c))\n\n    def quad(m, a, b, c, d):\n        tri(m, a, b, c)\n        tri(m, a, c, d)\n\n    def point(m, p):\n        m['vertices'].append(tuple(p))\n        return len(m['vertices']) - 1\n\n    def outer(t):\n        # Broad rounded central hall, tapering into two extended wings.\n        c, s = math.cos(t), math.sin(t)\n        x = 0.5 * length * c\n        y = 0.5 * width * math.copysign(abs(s) ** 0.5, s)\n        y *= 0.48 + 0.52 * math.exp(-(x / (0.30 * length)) ** 4)\n        y += 0.045 * width * math.sin(2 * math.pi * x / length)\n        return (x, y)\n\n    raw_outer = [outer(2 * math.pi * i / n) for i in range(n)]\n    ymin, ymax = min(p[1] for p in raw_outer), max(p[1] for p in raw_outer)\n    def outline(t):\n        x, y = outer(t)\n        return (x, (y - (ymin + ymax) / 2) * width / (ymax - ymin))\n\n    def roof_z(x, y):\n        # High rear crest, lower front lip, and a lifted right wing.\n        u, v = x / length, y / width\n        crest = math.exp(-((u + 0.075) / 0.245) ** 2)\n        right = math.exp(-((u - 0.43) / 0.20) ** 2)\n        return height * (0.18 + 0.76 * crest * (0.58 + 0.84 * v)\n                         + 0.36 * right + 0.09 * (u + 0.5))\n\n    thickness = min(0.65, height * 0.02)\n    def ring_point(i, f):\n        t = 2 * math.pi * i / n\n        ax, ay = 0.5 * opening_length * math.cos(t), 0.5 * opening_width * math.sin(t)\n        bx, by = outline(t)\n        x, y = ax + f * (bx - ax), ay + f * (by - ay)\n        return (x, y, roof_z(x, y))\n\n    roof = mesh('Roof shell', 'Porcelain')\n    radial = 10\n    for underside in (False, True):\n        for j in range(radial + 1):\n            for i in range(n):\n                x, y, z = ring_point(i, j / float(radial))\n                point(roof, (x, y, z - (thickness if underside else 0)))\n    offset = n * (radial + 1)\n    for j in range(radial):\n        for i in range(n):\n            k = (i + 1) % n\n            a, b, c, d = j*n+i, (j+1)*n+i, (j+1)*n+k, j*n+k\n            quad(roof, a, b, c, d)\n            quad(roof, d+offset, c+offset, b+offset, a+offset)\n    for i in range(n):\n        k = (i + 1) % n\n        quad(roof, i, k, k+offset, i+offset)\n        a, b = radial*n+i, radial*n+k\n        quad(roof, b, a, a+offset, b+offset)\n\n    # Box section following an arbitrary line, shared by fins and skylight grid.\n    def beam(m, a, b, size):\n        d = tuple(b[i]-a[i] for i in range(3))\n        norm = math.sqrt(sum(v*v for v in d))\n        if norm < 1e-7:\n            return\n        d = tuple(v/norm for v in d)\n        ref = (0., 0., 1.) if abs(d[2]) < 0.95 else (0., 1., 0.)\n        def cross(p, q):\n            return (p[1]*q[2]-p[2]*q[1], p[2]*q[0]-p[0]*q[2], p[0]*q[1]-p[1]*q[0])\n        u = cross(d, ref)\n        mag = math.sqrt(sum(v*v for v in u))\n        u = tuple(v/mag*size/2 for v in u)\n        v = cross(d, u)\n        ids = []\n        for p in (a, b):\n            for su, sv in ((-1,-1),(1,-1),(1,1),(-1,1)):\n                ids.append(point(m, tuple(p[i]+su*u[i]+sv*v[i] for i in range(3))))\n        quad(m, ids[3],ids[2],ids[1],ids[0])\n        quad(m, ids[4],ids[5],ids[6],ids[7])\n        for j in range(4):\n            k=(j+1)%4\n            quad(m,ids[j],ids[k],ids[k+4],ids[j+4])\n\n    # Individual panel boxes allow readable facade joints in shaded views.\n    facade = mesh('Facade panels', 'Porcelain')\n    entrance = mesh('Entrance glazing', 'Glass')\n    fins = mesh('Entrance fins', 'Porcelain')\n    for i in range(n):\n        t0, t1 = 2*math.pi*(i+0.035)/n, 2*math.pi*(i+0.965)/n\n        a, b = outline(t0), outline(t1)\n        is_entrance = a[0] < -length*0.25 and a[1] < 0\n        m = entrance if is_entrance else facade\n        # Insets keep panels and fins inside the specified bounding dimensions.\n        a, b = tuple(v*0.994 for v in a), tuple(v*0.994 for v in b)\n        ids=[]\n        for factor in (1., 0.990):\n            for p, z in ((a,0.),(b,0.),(b,roof_z(*b)-thickness),(a,roof_z(*a)-thickness)):\n                ids.append(point(m,(p[0]*factor,p[1]*factor,z)))\n        quad(m,*ids[:4]); quad(m,ids[7],ids[6],ids[5],ids[4])\n        for j in range(4):\n            k=(j+1)%4\n            quad(m,ids[j],ids[j+4],ids[k+4],ids[k])\n        if is_entrance and i % 2 == 0:\n            x,y=a\n            size = min(length,width)*0.008\n            beam(fins,(x,y,size/2),(x,y,roof_z(x,y)-thickness-size/2),size)\n\n    # Warped glazed surface sits below the roof's inner edge.\n    glass = mesh('Central skylight', 'Glass')\n    glass_drop = thickness*0.60\n    point(glass,(0.,0.,roof_z(0.,0.)-glass_drop))\n    rings=12\n    for j in range(1,rings+1):\n        for i in range(n):\n            t=2*math.pi*i/n\n            x=opening_length/2*j/rings*math.cos(t)\n            y=opening_width/2*j/rings*math.sin(t)\n            point(glass,(x,y,roof_z(x,y)-glass_drop))\n    for i in range(n):\n        tri(glass,0,1+i,1+(i+1)%n)\n    for j in range(rings-1):\n        for i in range(n):\n            k=(i+1)%n\n            quad(glass,1+j*n+i,1+(j+1)*n+i,1+(j+1)*n+k,1+j*n+k)\n\n    grid=mesh('Skylight grid', 'Aluminium')\n    spacing=2.5\n    for axis, half, other in ((0,opening_length/2,opening_width/2),(1,opening_width/2,opening_length/2)):\n        for k in range(-int(half/spacing),int(half/spacing)+1):\n            fixed=k*spacing\n            if abs(fixed)>=half*0.98:\n                continue\n            reach=other*math.sqrt(1-(fixed/half)**2)*0.998\n            steps=max(4,int(2*reach/1.5))\n            path=[]\n            for j in range(steps+1):\n                free=-reach+2*reach*j/steps\n                x,y=(fixed,free) if axis==0 else (free,fixed)\n                path.append((x,y,roof_z(x,y)-glass_drop+0.11))\n            for a,b in zip(path,path[1:]):\n                beam(grid,a,b,0.12)\n\n    # Fine strips follow the shell exactly, forming panel joints.\n    seams=mesh('Roof panel joints', 'Joint')\n    for i in range(0,n,2):\n        for j in range(radial):\n            a=ring_point(i,j/float(radial)); b=ring_point(i,(j+1)/float(radial))\n            dx,dy=b[0]-a[0],b[1]-a[1]\n            norm=math.hypot(dx,dy)\n            ux,uy=-dy/norm*0.018,dx/norm*0.018\n            ids=[]\n            for p,sgn in ((a,-1),(b,-1),(b,1),(a,1)):\n                x,y=p[0]+sgn*ux,p[1]+sgn*uy\n                point_z=roof_z(x,y)+0.006\n                ids.append(point(seams,(x,y,point_z)))\n            quad(seams,*ids)\n\n    slab=mesh('Ground floor', 'Concrete')\n    for z in (0.,0.25):\n        point(slab,(0.,0.,z))\n        for i in range(n):\n            x,y=outline(2*math.pi*i/n)\n            point(slab,(x*0.990,y*0.990,z))\n    off=n+1\n    for i in range(n):\n        a,b=1+i,1+(i+1)%n\n        tri(slab,0,b,a); tri(slab,off,off+a,off+b)\n        quad(slab,a,b,b+off,a+off)\n\n    # Enforce exact overall bounding dimensions, including joints and fins.\n    vertices=[p for m in meshes for p in m['vertices']]\n    lo=[min(p[a] for p in vertices) for a in range(3)]\n    hi=[max(p[a] for p in vertices) for a in range(3)]\n    scales=[length/(hi[0]-lo[0]),width/(hi[1]-lo[1]),height/(hi[2]-lo[2])]\n    for m in meshes:\n        m['vertices']=[((p[0]-(hi[0]+lo[0])/2)*scales[0],\n                        (p[1]-(hi[1]+lo[1])/2)*scales[1],\n                        (p[2]-lo[2])*scales[2]) for p in m['vertices']]\n    return meshes\n\n\n# Appended to wave_geometry.py and embedded in the .dyn file; no external paths.\nimport clr\nclr.AddReference('RevitAPI')\nclr.AddReference('RevitServices')\nfrom Autodesk.Revit.DB import (\n    BuiltInCategory, Color, DirectShape, ElementId, FilteredElementCollector,\n    GeometryObject, Material, SubTransaction, TessellatedFace,\n    TessellatedShapeBuilder, TessellatedShapeBuilderFallback,\n    TessellatedShapeBuilderTarget, TransactionStatus, UnitTypeId, UnitUtils, XYZ)\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\nfrom System.Collections.Generic import List\n\n\ndef create_revit_model(inputs):\n    doc = DocumentManager.Instance.CurrentDBDocument\n    if doc is None or doc.IsFamilyDocument:\n        raise ValueError('Open a Revit project (.rvt), not the family editor, then run again.')\n    length, width, height, opening_length, opening_width = [float(v) for v in inputs[:5]]\n    segments = float(inputs[5])\n    instance = str(inputs[6]).strip()\n    if not instance or len(instance) > 80:\n        raise ValueError('Model key must contain 1 to 80 characters.')\n    meshes = build_model(length, width, height, opening_length, opening_width, segments)\n    app_id = 'IanMatas.Dynamo.WaveHall.v1'\n    prefix = instance + '::'\n    existing = {}\n    for element in FilteredElementCollector(doc).OfClass(DirectShape):\n        if element.ApplicationId == app_id and element.ApplicationDataId.startswith(prefix):\n            key = element.ApplicationDataId[len(prefix):]\n            if key in existing:\n                raise ValueError('Duplicate model key found in Revit. Use a new Model key.')\n            existing[key] = element\n    palette = {\n        'Porcelain': ((235, 235, 229), 0),\n        'Glass': ((130, 165, 177), 65),\n        'Aluminium': ((100, 110, 114), 0),\n        'Joint': ((130, 132, 129), 0),\n        'Concrete': ((191, 189, 181), 0),\n    }\n    ft = UnitUtils.ConvertToInternalUnits(1.0, UnitTypeId.Meters)\n    TransactionManager.Instance.EnsureInTransaction(doc)\n    sub = SubTransaction(doc)\n    sub.Start()\n    result = []\n    try:\n        available = {m.Name: m for m in FilteredElementCollector(doc).OfClass(Material)}\n        material_ids = {}\n        for key, (rgb, transparency) in palette.items():\n            name = 'WaveHall - ' + key\n            if name in available:\n                mat = available[name]\n            else:\n                mat = doc.GetElement(Material.Create(doc, name))\n                mat.Color = Color(*rgb)\n                mat.Transparency = transparency\n                mat.Shininess = 65 if key == 'Glass' else 15\n            material_ids[key] = mat.Id\n        for mesh in meshes:\n            if not mesh['faces']:\n                continue\n            builder = TessellatedShapeBuilder()\n            builder.OpenConnectedFaceSet(False)\n            xyz = [XYZ(p[0]*ft, p[1]*ft, p[2]*ft) for p in mesh['vertices']]\n            for indices in mesh['faces']:\n                vertices = List[XYZ]()\n                for index in indices:\n                    vertices.Add(xyz[index])\n                face = TessellatedFace(vertices, material_ids[mesh['material']])\n                if not builder.DoesFaceHaveEnoughLoopsAndVertices(face):\n                    raise ValueError('Invalid face in ' + mesh['name'])\n                builder.AddFace(face)\n            builder.CloseConnectedFaceSet()\n            builder.Target = TessellatedShapeBuilderTarget.Mesh\n            builder.Fallback = TessellatedShapeBuilderFallback.Salvage\n            builder.Build()\n            built = builder.GetBuildResult()\n            if built.AreThereInvalidData:\n                raise ValueError('Revit rejected tessellation data in ' + mesh['name'])\n            objects = built.GetGeometricalObjects()\n            if objects.Count == 0:\n                raise ValueError('Revit produced no geometry for ' + mesh['name'])\n            element = existing.pop(mesh['name'], None)\n            if element is None:\n                element = DirectShape.CreateElement(doc, ElementId(BuiltInCategory.OST_GenericModel))\n                element.ApplicationId = app_id\n                element.ApplicationDataId = prefix + mesh['name']\n            element.SetShape(List[GeometryObject](objects))\n            element.Name = instance + ' - ' + mesh['name']\n            result.append(element)\n        # Only previously generated components with this exact application/model key.\n        for stale in existing.values():\n            doc.Delete(stale.Id)\n        doc.Regenerate()\n        if sub.Commit() != TransactionStatus.Committed:\n            raise RuntimeError('Revit did not commit the model transaction.')\n    except:\n        if sub.GetStatus() == TransactionStatus.Started:\n            sub.RollBack()\n        raise\n    finally:\n        sub.Dispose()\n        TransactionManager.Instance.TransactionTaskDone()\n    return {\n        'Status': 'Created or updated concept geometry',\n        'Model key': instance,\n        'Overall metres (L, W, H)': [length, width, height],\n        'Elements': result,\n        'Triangles': sum(len(m['faces']) for m in meshes),\n        'Note': 'Generic Model meshes; not native roof/wall/curtain-system or structural design.'\n    }\n\nOUT = create_revit_model(IN)\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "b643a9f035ab57aa91cc37781d2a1e33",
+      "Inputs": [
+        {
+          "Id": "d4ab1f5ce08955bcb807dc0feb9ff324",
+          "Name": "IN[0]",
+          "Description": "IN[0]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7f7b8310536e532d838dde7de3248bee",
+          "Name": "IN[1]",
+          "Description": "IN[1]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "28ca67cf571d58dd9c1cf4e85637f546",
+          "Name": "IN[2]",
+          "Description": "IN[2]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2df6a5d0c5f55a4b8a372e3f5f9d782e",
+          "Name": "IN[3]",
+          "Description": "IN[3]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a68ed77586d650deb67c11edbd5ecdcd",
+          "Name": "IN[4]",
+          "Description": "IN[4]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "db3b078b9ede5f8caec63a81e8d1bda5",
+          "Name": "IN[5]",
+          "Description": "IN[5]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a710268f85495585b385c87b8f79fe7f",
+          "Name": "IN[6]",
+          "Description": "IN[6]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "158a591fe6bb56878151f0927083ba73",
+          "Name": "OUT",
+          "Description": "OUT",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Build or update the wave hall in the active Revit project."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "694f8690bb9f55208aae1bd94b6402e5",
+      "End": "d4ab1f5ce08955bcb807dc0feb9ff324",
+      "Id": "e84d9b268edb55b4916f34368e11eefa",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "d7fb9ac08d035d32925ef29cc6913820",
+      "End": "7f7b8310536e532d838dde7de3248bee",
+      "Id": "c6327dcd02dc593b9815b6f0632acf77",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "93e87719f4d9573db1c01d1d0e0c0f0d",
+      "End": "28ca67cf571d58dd9c1cf4e85637f546",
+      "Id": "b6d2f165be225c21bed8639def27c737",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "b24ae14bcfd45b70807d935c4c817459",
+      "End": "2df6a5d0c5f55a4b8a372e3f5f9d782e",
+      "Id": "c6d5b99ac6b352a092602e3bb74d52d0",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "d5f6e44e19555de2945bac6c2de5033a",
+      "End": "a68ed77586d650deb67c11edbd5ecdcd",
+      "Id": "105b58ac8ccf5dc3aec8d00e88d87e6f",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "f788371d20ee5213b4370fa7badbaf2b",
+      "End": "db3b078b9ede5f8caec63a81e8d1bda5",
+      "Id": "f3bb290ff9ed518bb9f7a01278d24df1",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "fae7278c63cf5c07bd7b7db22ba085b3",
+      "End": "a710268f85495585b385c87b8f79fe7f",
+      "Id": "5e20e6f4194354ecb706ea27d6fd0246",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": false,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.4.0.0",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": false,
+        "Name": "Length (m)",
+        "Id": "ee25c5822e4e5e299d44e01d29bcf75e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40,
+        "Y": 60
+      },
+      {
+        "ShowGeometry": false,
+        "Name": "Width (m)",
+        "Id": "33655fa3047550feabecc965aca28567",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40,
+        "Y": 175
+      },
+      {
+        "ShowGeometry": false,
+        "Name": "Height (m)",
+        "Id": "a3a0be51057a5a0096f3a867d0013c5f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40,
+        "Y": 290
+      },
+      {
+        "ShowGeometry": false,
+        "Name": "Opening length (m)",
+        "Id": "034428bb09f05fea8bd5bab2e02e6fd4",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40,
+        "Y": 405
+      },
+      {
+        "ShowGeometry": false,
+        "Name": "Opening width (m)",
+        "Id": "fdc88f9b9d745491a81048d2a866a35b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40,
+        "Y": 520
+      },
+      {
+        "ShowGeometry": false,
+        "Name": "Segments (64 to 256, multiple of 4)",
+        "Id": "1d0c41d5a4d852a9852dfe118acd4717",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40,
+        "Y": 635
+      },
+      {
+        "ShowGeometry": false,
+        "Name": "Model key (reuse to update)",
+        "Id": "c250b839b49b5274b4a09f462c04860d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40,
+        "Y": 750
+      },
+      {
+        "ShowGeometry": false,
+        "Name": "Create / update Wave Hall in Revit",
+        "Id": "b643a9f035ab57aa91cc37781d2a1e33",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "X": 540,
+        "Y": 230
+      }
+    ],
+    "Annotations": [],
+    "X": 30,
+    "Y": 30,
+    "Zoom": 0.85
+  }
+}
